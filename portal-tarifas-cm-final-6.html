@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotizador de Fletes · C&M Ship & Logistics</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Arial Black',Arial,sans-serif;background:#EEEEEE;}
+
+
+
+/* TOPBAR */
+.topbar{background:#1A1A1A;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #FF5A00;}
+.logo-wrap{display:flex;flex-direction:column;gap:2px;}
+.logo-text{font-size:32px;font-weight:900;color:white;letter-spacing:-1px;font-family:"Arial Black",Arial,sans-serif;line-height:1;}
+.logo-amp{color:#FF5A00;}
+.logo-sub{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase;font-family:Arial,sans-serif;margin-top:2px;}
+.footer-logo-text{font-size:28px;font-weight:900;color:white;letter-spacing:-1px;font-family:"Arial Black",Arial,sans-serif;margin-bottom:6px;}
+.nav{display:flex;gap:20px;}
+.nav a{font-size:10px;color:rgba(255,255,255,.6);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;font-family:Arial,sans-serif;transition:color .15s;}
+.nav a:hover{color:#FF5A00;}
+
+/* HERO COTIZADOR */
+.hero{background:#1A1A1A;padding:44px 24px 52px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:280px;height:280px;border-radius:50%;background:#FF5A00;opacity:.05;}
+.hero-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35);font-family:Arial,sans-serif;margin-bottom:14px;}
+.hero-title{font-size:clamp(32px,5vw,54px);font-weight:900;color:white;text-transform:uppercase;line-height:1;letter-spacing:-1px;margin-bottom:10px;}
+.hero-title span{color:#FF5A00;}
+
+/* CARTEL 30 MIN */
+.badge-30{display:inline-flex;align-items:center;gap:10px;background:#FF5A00;border-radius:50px;padding:12px 28px;margin:20px auto 28px;}
+.badge-30-icon{font-size:22px;}
+.badge-30-text{text-align:left;}
+.badge-30-top{font-size:20px;font-weight:900;color:white;line-height:1;letter-spacing:-0.5px;}
+.badge-30-sub{font-size:11px;color:rgba(255,255,255,.8);font-family:Arial,sans-serif;font-weight:400;letter-spacing:.02em;}
+
+/* SEARCH */
+.search-wrap{max-width:580px;margin:0 auto 16px;}
+.search-bar{display:flex;border-radius:10px;overflow:hidden;border:2px solid #FF5A00;}
+.search-bar input{flex:1;padding:15px 18px;background:#252525;border:none;color:white;font-family:Arial,sans-serif;font-size:14px;outline:none;}
+.search-bar input::placeholder{color:rgba(255,255,255,.25);}
+.search-bar button{padding:15px 26px;background:#FF5A00;border:none;color:white;font-size:12px;font-weight:900;font-family:'Arial Black',Arial,sans-serif;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;white-space:nowrap;}
+.search-bar button:hover{background:#E04E00;}
+
+.hero-chips{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;}
+.hchip{font-size:10px;color:rgba(255,255,255,.4);background:rgba(255,255,255,.06);padding:5px 13px;border-radius:20px;font-family:Arial,sans-serif;cursor:pointer;transition:all .15s;}
+.hchip:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);}
+.hchip span{color:#FF5A00;font-weight:700;}
+
+.sticker{position:absolute;top:20px;right:20px;width:110px;height:110px;display:flex;align-items:center;justify-content:center;transform:rotate(12deg);z-index:10;filter:drop-shadow(0 4px 16px rgba(255,90,0,.35));}
+.hero-wave{height:32px;background:#1A1A1A;position:relative;}
+.hero-wave::after{content:'';position:absolute;bottom:0;left:0;right:0;height:32px;background:#EEEEEE;border-radius:50% 50% 0 0/100% 100% 0 0;}
+
+/* BODY */
+.body{padding:20px;max-width:1060px;margin:0 auto;}
+.srv-label{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#999;margin-bottom:12px;font-family:Arial,sans-serif;}
+.srv-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:22px;}
+@media(min-width:600px){.srv-grid{grid-template-columns:repeat(4,1fr);}}
+.srv{background:white;border-radius:12px;padding:20px 12px 16px;text-align:center;cursor:pointer;transition:all .2s;border:3px solid transparent;position:relative;overflow:hidden;}
+.srv::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:#E0E0E0;transition:background .2s;}
+.srv.on::before{background:#FF5A00;}
+.srv.on{border-color:#FF5A00;}
+.srv:hover{border-color:#FFCCAA;}
+.srv-illo{height:64px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.srv-name{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;color:#1A1A1A;margin-bottom:2px;}
+.srv-sub{font-size:10px;color:#999;font-family:Arial,sans-serif;}
+.srv-count{font-size:10px;color:#FF5A00;font-weight:700;margin-top:5px;font-family:Arial,sans-serif;min-height:14px;}
+
+.filter-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.filter-row input,.filter-row select{font-size:13px;padding:10px 12px;border:2px solid #E0E0E0;border-radius:8px;background:white;color:#1A1A1A;font-family:Arial,sans-serif;outline:none;transition:border .15s;}
+.filter-row input{flex:1;min-width:180px;}
+.filter-row input:focus,.filter-row select:focus{border-color:#FF5A00;}
+.result-count{font-size:12px;color:#999;font-family:Arial,sans-serif;margin-bottom:14px;}
+.result-count strong{color:#FF5A00;font-weight:900;}
+
+.rates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:28px;}
+.rcard{background:white;border-radius:12px;overflow:hidden;border:2px solid transparent;transition:all .2s;}
+.rcard:hover{border-color:#FF5A00;transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08);}
+.rcard-bar{background:#FF5A00;padding:9px 16px;display:flex;align-items:center;justify-content:space-between;}
+.rcard-carrier{font-size:11px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.07em;}
+.rcard-badge{font-size:9px;background:rgba(0,0,0,.2);color:white;padding:3px 9px;border-radius:20px;text-transform:uppercase;font-family:Arial,sans-serif;}
+.rcard-body{padding:16px;}
+.rcard-route{font-size:16px;font-weight:900;color:#1A1A1A;text-transform:uppercase;line-height:1.15;margin-bottom:3px;}
+.rcard-arrow{color:#FF5A00;margin:0 4px;}
+.rcard-type{font-size:10px;color:#AAAAAA;text-transform:uppercase;letter-spacing:.06em;font-family:Arial,sans-serif;margin-bottom:14px;}
+.prices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.prices.solo{grid-template-columns:1fr;}
+.pbox{background:#F5F5F5;border-radius:8px;padding:12px;text-align:center;}
+.pval{font-size:24px;font-weight:900;color:#FF5A00;line-height:1;}
+.pusd{font-size:12px;font-weight:700;color:#FF5A00;}
+.plbl{font-size:10px;color:#AAAAAA;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;font-family:Arial,sans-serif;}
+.rcard-meta{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{font-size:11px;color:#666;background:#F0F0F0;padding:5px 10px;border-radius:20px;font-family:Arial,sans-serif;}
+
+/* CTA FINAL */
+.cta-band{background:#1A1A1A;border-radius:14px;padding:36px 24px;text-align:center;margin-bottom:24px;position:relative;overflow:hidden;}
+.cta-band::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:#FF5A00;opacity:.08;}
+.cta-30{display:inline-flex;align-items:center;gap:10px;background:#FF5A00;border-radius:50px;padding:10px 24px;margin-bottom:16px;}
+.cta-30-val{font-size:22px;font-weight:900;color:white;letter-spacing:-0.5px;}
+.cta-30-lbl{font-size:11px;color:rgba(255,255,255,.8);font-family:Arial,sans-serif;text-align:left;line-height:1.3;}
+.cta-title{font-size:24px;font-weight:900;color:white;text-transform:uppercase;margin-bottom:8px;}
+.cta-sub{font-size:13px;color:rgba(255,255,255,.4);line-height:1.7;font-family:Arial,sans-serif;margin-bottom:22px;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.cbtn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:50px;font-size:13px;font-weight:900;text-decoration:none;text-transform:uppercase;letter-spacing:.06em;border:none;cursor:pointer;font-family:'Arial Black',Arial,sans-serif;}
+.cbtn.ora{background:#FF5A00;color:white;}
+.cbtn.wht{background:transparent;color:white;border:2px solid rgba(255,255,255,.25);}
+.cbtn.ora:hover{background:#E04E00;}
+
+.footer{background:#1A1A1A;padding:0;margin-top:32px;}
+.footer-top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:32px 28px;flex-wrap:wrap;border-top:3px solid #FF5A00;}
+.footer-logo-wrap{display:flex;flex-direction:column;gap:4px;}
+.footer-hashtag{font-size:13px;font-weight:900;color:#FF5A00;letter-spacing:.06em;font-family:"Arial Black",Arial,sans-serif;margin-top:4px;}
+.footer-contact{display:flex;flex-direction:column;gap:12px;flex:1;min-width:200px;}
+.footer-citem{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:rgba(255,255,255,.7);font-family:Arial,sans-serif;line-height:1.5;text-decoration:none;transition:color .15s;}
+.footer-citem:hover{color:#FF5A00;}
+.footer-cicon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.footer-iso{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.footer-iso-label{font-size:10px;color:rgba(255,255,255,.4);font-family:Arial,sans-serif;text-align:center;line-height:1.5;max-width:120px;}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding:12px 28px;display:flex;align-items:center;justify-content:center;}
+.vigencia-txt{font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.05em;text-transform:uppercase;font-family:Arial,sans-serif;}
+.empty{text-align:center;padding:50px;color:#CCC;font-family:Arial,sans-serif;font-size:14px;}
+@media(max-width:500px){.nav{display:none;}}
+</style>
+</head>
+<body>
+
+
+
+<!-- HEADER -->
+<div class="topbar">
+  <div class="logo-wrap">
+    <div class="logo-text">C<span class="logo-amp">&</span>M</div>
+    <div class="logo-sub">#SOMOSC&M · GlobalBroker Engineering</div>
+  </div>
+  </div>
+  </div>
+  <div class="nav">
+    <a href="#">Importación</a>
+    <a href="#">Exportación</a>
+    <a href="#">Courier</a>
+    <a href="#">Contacto</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="sticker">
+    <svg width="110" height="110" viewBox="0 0 130 130">
+      <circle cx="65" cy="65" r="62" fill="#1A1A1A"/>
+      <circle cx="65" cy="65" r="58" fill="none" stroke="#FF5A00" stroke-width="2.5"/>
+      <circle cx="65" cy="65" r="50" fill="none" stroke="rgba(255,90,0,.3)" stroke-width="1"/>
+      <text x="65" y="40" text-anchor="middle" font-family="Arial Black,Arial" font-size="7" font-weight="900" fill="#FF5A00" letter-spacing="3">EXPERIENCIA</text>
+      <text x="65" y="84" text-anchor="middle" font-family="Arial Black,Arial" font-size="56" font-weight="900" fill="#FF5A00" letter-spacing="-3">25</text>
+      <text x="65" y="100" text-anchor="middle" font-family="Arial Black,Arial" font-size="7" font-weight="900" fill="white" letter-spacing="3">AÑOS</text>
+      <text x="65" y="114" text-anchor="middle" font-family="Arial Black,Arial" font-size="6.5" font-weight="700" fill="rgba(255,255,255,.4)" letter-spacing="1.5">C&amp;M SHIP &amp; LOGISTICS</text>
+    </svg>
+  </div>
+  <div class="hero-eyebrow">Cotizador online de fletes internacionales</div>
+  <div class="hero-title">TARIFAS DE<br>FLETE <span>VIGENTES</span></div>
+
+  <div class="badge-30">
+    <div class="badge-30-icon">⚡</div>
+    <div class="badge-30-text">
+      <div class="badge-30-top">COTIZAMOS EN 30 MINUTOS</div>
+      <div class="badge-30-sub">Si no encontrás tu ruta · Contactanos ahora</div>
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-bar">
+      <input type="text" id="heroSearch" placeholder="¿A dónde querés enviar tu carga?" onkeydown="if(event.key==='Enter'){buscar();}">
+      <button onclick="buscar()">BUSCAR TARIFA</button>
+    </div>
+  </div>
+
+  <div class="hero-chips">
+    <span class="hchip" onclick="setS('SHANGHAI')">FCL <span>CHINA → ARG</span></span>
+    <span class="hchip" onclick="setS('MIAMI')">FCL <span>USA → ARG</span></span>
+    <span class="hchip" onclick="setS('ROTTERDAM')">FCL <span>EUROPA → ARG</span></span>
+    <span class="hchip" onclick="setS('SANTOS')">FCL <span>BRASIL → ARG</span></span>
+    <span class="hchip" onclick="setS('CHINA');sv2('expo')">FCL <span>ARG → CHINA</span></span>
+  </div>
+</div>
+<div class="hero-wave"></div>
+
+<!-- BODY -->
+<div class="body">
+  <div class="srv-label">Seleccioná el servicio</div>
+  <div class="srv-grid">
+    <div class="srv on" id="srv-impo" onclick="sv('impo',this)">
+      <div class="srv-illo">
+        <svg viewBox="0 0 80 64" width="80" height="64">
+          <ellipse cx="40" cy="54" rx="32" ry="8" fill="#FF5A00" opacity=".15"/>
+          <path d="M8 44 Q40 36 72 44 L68 52 Q40 58 12 52Z" fill="#1A1A1A"/>
+          <path d="M12 44 Q40 38 68 44" fill="none" stroke="#FF5A00" stroke-width="2"/>
+          <rect x="22" y="24" width="20" height="14" rx="1" fill="#FF5A00"/>
+          <line x1="32" y1="26" x2="32" y2="36" stroke="#CC4400" stroke-width="1.5"/>
+          <rect x="30" y="14" width="20" height="12" rx="1" fill="#1A1A1A"/>
+          <line x1="40" y1="16" x2="40" y2="24" stroke="#FF5A00" stroke-width="1.5"/>
+          <line x1="52" y1="10" x2="52" y2="38" stroke="#333" stroke-width="2"/>
+          <line x1="40" y1="10" x2="62" y2="10" stroke="#333" stroke-width="2"/>
+          <rect x="46" y="18" width="12" height="8" rx="1" fill="#FF5A00"/>
+          <path d="M14 10 L14 30 L28 30" fill="none" stroke="#FF5A00" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <circle cx="14" cy="10" r="3" fill="#FF5A00"/>
+        </svg>
+      </div>
+      <div class="srv-name">Importación</div>
+      <div class="srv-sub">Marítimo FCL</div>
+      <div class="srv-count" id="cnt-impo"></div>
+    </div>
+    <div class="srv" id="srv-expo" onclick="sv('expo',this)">
+      <div class="srv-illo">
+        <svg viewBox="0 0 80 64" width="80" height="64">
+          <ellipse cx="40" cy="54" rx="32" ry="8" fill="#FF5A00" opacity=".15"/>
+          <path d="M8 44 Q40 36 72 44 L68 52 Q40 58 12 52Z" fill="#1A1A1A"/>
+          <path d="M12 44 Q40 38 68 44" fill="none" stroke="#FF5A00" stroke-width="2"/>
+          <rect x="28" y="20" width="18" height="12" rx="1" fill="#FF5A00"/>
+          <rect x="20" y="28" width="18" height="12" rx="1" fill="#1A1A1A"/>
+          <circle cx="58" cy="22" r="6" fill="#FFB899"/>
+          <rect x="54" y="28" width="8" height="12" rx="2" fill="#FF5A00"/>
+          <polyline points="44,18 48,22 54,14" fill="none" stroke="#FF5A00" stroke-width="2" stroke-linecap="round"/>
+          <line x1="36" y1="12" x2="52" y2="12" stroke="#FF5A00" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <polygon points="52,9 52,15 58,12" fill="#FF5A00"/>
+        </svg>
+      </div>
+      <div class="srv-name">Exportación</div>
+      <div class="srv-sub">Marítimo FCL</div>
+      <div class="srv-count" id="cnt-expo"></div>
+    </div>
+    <div class="srv" id="srv-cexp" onclick="sv('cexp',this)">
+      <div class="srv-illo">
+        <svg viewBox="0 0 80 64" width="80" height="64">
+          <ellipse cx="40" cy="54" rx="30" ry="7" fill="#FF5A00" opacity=".12"/>
+          <polygon points="20,46 40,54 60,46 40,38" fill="#FF5A00"/>
+          <polygon points="20,46 20,50 40,58 40,54" fill="#CC4400"/>
+          <polygon points="60,46 60,50 40,58 40,54" fill="#E04E00"/>
+          <rect x="26" y="20" width="28" height="20" rx="2" fill="#1A1A1A"/>
+          <polygon points="26,20 40,14 54,20" fill="#333"/>
+          <line x1="33" y1="30" x2="47" y2="30" stroke="#FF5A00" stroke-width="1.5"/>
+          <line x1="40" y1="24" x2="40" y2="38" stroke="#FF5A00" stroke-width="1.5"/>
+          <path d="M50,10 L65,10" fill="none" stroke="#333" stroke-width="2"/>
+          <polygon points="65,7 65,13 70,10" fill="#FF5A00"/>
+        </svg>
+      </div>
+      <div class="srv-name">Courier Expo</div>
+      <div class="srv-sub">Puerta a puerta</div>
+      <div class="srv-count" id="cnt-cexp"></div>
+    </div>
+    <div class="srv" id="srv-cimp" onclick="sv('cimp',this)">
+      <div class="srv-illo">
+        <svg viewBox="0 0 80 64" width="80" height="64">
+          <ellipse cx="40" cy="54" rx="30" ry="7" fill="#FF5A00" opacity=".12"/>
+          <polygon points="20,46 40,54 60,46 40,38" fill="#1A1A1A"/>
+          <polygon points="20,46 20,50 40,58 40,54" fill="#111"/>
+          <polygon points="60,46 60,50 40,58 40,54" fill="#222"/>
+          <rect x="27" y="20" width="26" height="20" rx="2" fill="#FF5A00"/>
+          <polygon points="27,20 40,14 53,20" fill="#CC4400"/>
+          <line x1="34" y1="30" x2="46" y2="30" stroke="#1A1A1A" stroke-width="1.5"/>
+          <line x1="40" y1="24" x2="40" y2="38" stroke="#1A1A1A" stroke-width="1.5"/>
+          <path d="M65,10 L50,10" fill="none" stroke="#333" stroke-width="2"/>
+          <polygon points="50,7 50,13 45,10" fill="#FF5A00"/>
+          <circle cx="65" cy="10" r="3" fill="#FF5A00"/>
+        </svg>
+      </div>
+      <div class="srv-name">Courier Impo</div>
+      <div class="srv-sub">Puerta a puerta</div>
+      <div class="srv-count" id="cnt-cimp"></div>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <input type="text" id="fsearch" placeholder="Buscar origen o destino..." oninput="render()">
+    <select id="fcar" onchange="render()"><option value="">Todas las navieras</option></select>
+  </div>
+  <div class="result-count" id="rcnt"></div>
+  <div class="rates-grid" id="rgrid"></div>
+  <div class="empty" id="rempty" style="display:none">Sin tarifas para ese filtro.<br>¡Cotizamos en 30 minutos! Contactanos.</div>
+
+  <div class="cta-band">
+    <div class="cta-30">
+      <div style="font-size:24px">⚡</div>
+      <div>
+        <div class="cta-30-val">COTIZAMOS EN 30 MINUTOS</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.8);font-family:Arial,sans-serif;">Cualquier origen · Cualquier destino · Mejor precio garantizado</div>
+      </div>
+    </div>
+    <div class="cta-title">¿No encontrás tu ruta?</div>
+    <div class="cta-sub">Conectamos tu negocio con el mundo, sin fronteras.<br>No importa el origen ni el destino, en C&M siempre encontramos el camino.</div>
+    <div class="cta-btns">
+      <a class="cbtn ora" href="https://wa.me/5491139703900?text=Hola%2C%20quiero%20cotizar%20un%20flete%20con%20C%26M" target="_blank">⚡ WhatsApp — respuesta inmediata</a>
+      <a class="cbtn wht" href="mailto:info@cmshipbroker.com.ar?subject=Cotizacion%20de%20flete" target="_blank">Enviar email</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-top">
+      <div class="footer-logo-wrap">
+        <div class="footer-logo-text">C<span style="color:#FF5A00">&</span>M</div>
+        <div class="footer-hashtag">#SOMOSC&M</div>
+      </div>
+      <div class="footer-contact">
+        <a href="tel:+541139703900" class="footer-citem">
+          <span class="footer-cicon">&#128222;</span>
+          <span>+54 011 3970 3900</span>
+        </a>
+        <a href="mailto:info@cmship.com" class="footer-citem">
+          <span class="footer-cicon">&#9993;</span>
+          <span>info@cmship.com</span>
+        </a>
+        <div class="footer-citem">
+          <span class="footer-cicon">&#128205;</span>
+          <span>Complejo Leloir Office Plaza, Martin Fierro 3246, Piso 2<br>Parque Leloir, Buenos Aires · CP 1724</span>
+        </div>
+      </div>
+      <div class="footer-iso">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="30" fill="none" stroke="#FF5A00" stroke-width="2.5"/>
+          <circle cx="32" cy="32" r="24" fill="none" stroke="rgba(255,90,0,.3)" stroke-width="1"/>
+          <text x="32" y="24" text-anchor="middle" font-family="Arial Black,Arial" font-size="7" font-weight="900" fill="#FF5A00" letter-spacing="1">CERTIFICADA</text>
+          <text x="32" y="36" text-anchor="middle" font-family="Arial Black,Arial" font-size="11" font-weight="900" fill="white" letter-spacing="-0.5">ISO</text>
+          <text x="32" y="48" text-anchor="middle" font-family="Arial Black,Arial" font-size="11" font-weight="900" fill="#FF5A00" letter-spacing="-0.5">9001</text>
+        </svg>
+        <div class="footer-iso-label">Procesos certificados<br>con estándares internacionales</div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="vigencia-txt">Tarifas vigentes al 05/06/2026 · Sujeto a disponibilidad · No incluyen THC ni gastos locales</div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+
+const R={
+  impo:[
+    {o:"SHANGHAI",d:"BUENOS AIRES",car:"MAERSK LINE",p20:1850,p40:2400,tt:"28 días",badge:"Semanal"},
+    {o:"SHANGHAI",d:"BUENOS AIRES",car:"MSC",p20:1750,p40:2200,tt:"30 días",badge:""},
+    {o:"NINGBO",d:"BUENOS AIRES",car:"CMA-CGM",p20:1900,p40:2500,tt:"32 días",badge:""},
+    {o:"NINGBO",d:"BUENOS AIRES",car:"ONE",p20:1800,p40:2350,tt:"30 días",badge:""},
+    {o:"SINGAPORE",d:"BUENOS AIRES",car:"HAPAG LLOYD",p20:2100,p40:2800,tt:"25 días",badge:"Más rápido"},
+    {o:"HONG KONG",d:"BUENOS AIRES",car:"COSCO",p20:1950,p40:2600,tt:"33 días",badge:""},
+    {o:"ROTTERDAM",d:"BUENOS AIRES",car:"MAERSK LINE",p20:1400,p40:1900,tt:"22 días",badge:"Europa"},
+    {o:"HAMBURG",d:"BUENOS AIRES",car:"HAPAG LLOYD",p20:1350,p40:1850,tt:"24 días",badge:""},
+    {o:"SANTOS",d:"BUENOS AIRES",car:"LOG IN LOGISTICA",p20:450,p40:650,tt:"5 días",badge:"Regional"},
+    {o:"MIAMI",d:"BUENOS AIRES",car:"CMA-CGM",p20:1600,p40:2100,tt:"18 días",badge:""},
+    {o:"ANTWERPEN",d:"BUENOS AIRES",car:"MSC",p20:1300,p40:1780,tt:"21 días",badge:""},
+    {o:"YANTIAN",d:"BUENOS AIRES",car:"EVERGREEN",p20:1780,p40:2300,tt:"31 días",badge:""},
+  ],
+  expo:[
+    {o:"BUENOS AIRES",d:"CHINA",car:"MAERSK LINE",p20:950,p40:1400,tt:"28 días",badge:"Semanal"},
+    {o:"BUENOS AIRES",d:"CHINA",car:"MSC",p20:900,p40:1350,tt:"30 días",badge:""},
+    {o:"BUENOS AIRES",d:"NETHERLANDS",car:"HAPAG LLOYD",p20:850,p40:1200,tt:"20 días",badge:""},
+    {o:"BUENOS AIRES",d:"USA",car:"MAERSK LINE",p20:800,p40:1150,tt:"16 días",badge:"Rápido"},
+    {o:"BUENOS AIRES",d:"VIETNAM",car:"ONE",p20:1000,p40:1500,tt:"32 días",badge:""},
+    {o:"BUENOS AIRES",d:"BRAZIL",car:"LOG IN LOGISTICA",p20:380,p40:550,tt:"4 días",badge:"Regional"},
+    {o:"BUENOS AIRES",d:"SPAIN",car:"MSC",p20:750,p40:1100,tt:"18 días",badge:""},
+    {o:"ZARATE",d:"CHINA",car:"CMA-CGM",p20:920,p40:1380,tt:"29 días",badge:""},
+    {o:"ROSARIO",d:"NETHERLANDS",car:"MAERSK LINE",p20:870,p40:1220,tt:"21 días",badge:""},
+    {o:"BUENOS AIRES",d:"ISRAEL",car:"ZIM",p20:820,p40:1180,tt:"22 días",badge:""},
+    {o:"BUENOS AIRES",d:"GERMANY",car:"HAPAG LLOYD",p20:880,p40:1250,tt:"21 días",badge:""},
+    {o:"BUENOS AIRES",d:"ITALY",car:"MSC",p20:760,p40:1120,tt:"19 días",badge:""},
+  ],
+  cexp:[
+    {o:"ARGENTINA",d:"USA",car:"DHL",tt:"3-5 días",badge:"Hasta 70kg",pkg:"8"},
+    {o:"ARGENTINA",d:"EUROPA",car:"FEDEX",tt:"4-6 días",badge:"Hasta 70kg",pkg:"9"},
+    {o:"ARGENTINA",d:"CHINA",car:"DHL",tt:"5-7 días",badge:"Hasta 70kg",pkg:"11"},
+    {o:"ARGENTINA",d:"BRASIL",car:"FEDEX",tt:"2-3 días",badge:"Regional",pkg:"5"},
+    {o:"ARGENTINA",d:"MEXICO",car:"UPS",tt:"4-5 días",badge:"Hasta 70kg",pkg:"7"},
+    {o:"ARGENTINA",d:"CHILE",car:"DHL",tt:"2-3 días",badge:"Regional",pkg:"4"},
+  ],
+  cimp:[
+    {o:"USA",d:"ARGENTINA",car:"DHL",tt:"3-5 días",badge:"Hasta 70kg",pkg:"9"},
+    {o:"EUROPA",d:"ARGENTINA",car:"FEDEX",tt:"4-6 días",badge:"Hasta 70kg",pkg:"10"},
+    {o:"CHINA",d:"ARGENTINA",car:"DHL",tt:"5-7 días",badge:"Hasta 70kg",pkg:"12"},
+    {o:"BRASIL",d:"ARGENTINA",car:"FEDEX",tt:"2-3 días",badge:"Regional",pkg:"6"},
+    {o:"MEXICO",d:"ARGENTINA",car:"UPS",tt:"4-5 días",badge:"Hasta 70kg",pkg:"8"},
+    {o:"CHILE",d:"ARGENTINA",car:"DHL",tt:"2-3 días",badge:"Regional",pkg:"5"},
+  ]
+};
+
+let cur='impo';
+Object.keys(R).forEach(k=>{const el=document.getElementById('cnt-'+k);if(el)el.textContent=R[k].length+' tarifas';});
+
+function setS(term){
+  document.getElementById('heroSearch').value=term;
+  document.getElementById('fsearch').value=term;
+  render();
+  document.querySelector('.body').scrollIntoView({behavior:'smooth'});
+}
+function buscar(){
+  document.getElementById('fsearch').value=document.getElementById('heroSearch').value;
+  render();
+  document.querySelector('.body').scrollIntoView({behavior:'smooth'});
+}
+function sv2(s){
+  const el=document.getElementById('srv-'+s);
+  sv(s,el);
+}
+function sv(s,el){
+  cur=s;
+  document.querySelectorAll('.srv').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  const cars=[...new Set(R[s].map(r=>r.car))];
+  const sel=document.getElementById('fcar');
+  sel.innerHTML='<option value="">Todas las navieras</option>';
+  cars.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+  document.getElementById('fsearch').value='';
+  render();
+}
+function fmt(n){return n.toLocaleString('en-US');}
+function render(){
+  const q=document.getElementById('fsearch').value.trim().toUpperCase();
+  const car=document.getElementById('fcar').value;
+  const list=R[cur].filter(r=>{
+    if(q&&!r.o.includes(q)&&!r.d.includes(q)&&!r.car.toUpperCase().includes(q))return false;
+    if(car&&r.car!==car)return false;
+    return true;
+  });
+  document.getElementById('rcnt').innerHTML=`<strong>${list.length}</strong> tarifa${list.length!==1?'s':''} disponible${list.length!==1?'s':''}`;
+  const g=document.getElementById('rgrid');
+  const em=document.getElementById('rempty');
+  if(!list.length){g.innerHTML='';em.style.display='block';return;}
+  em.style.display='none';
+  const isCr=cur==='cexp'||cur==='cimp';
+  g.innerHTML=list.map(r=>`
+    <div class="rcard">
+      <div class="rcard-bar"><span class="rcard-carrier">${r.car}</span>${r.badge?`<span class="rcard-badge">${r.badge}</span>`:''}</div>
+      <div class="rcard-body">
+        <div class="rcard-route">${r.o}<span class="rcard-arrow">›</span>${r.d}</div>
+        <div class="rcard-type">${isCr?'Courier puerta a puerta':'Contenedor FCL'}</div>
+        ${isCr?`<div class="prices solo"><div class="pbox"><div class="pval"><span class="pusd">USD </span>${r.pkg}<span style="font-size:15px">/kg</span></div><div class="plbl">Por kilogramo</div></div></div>`
+        :`<div class="prices"><div class="pbox"><div class="pval"><span class="pusd">$</span>${fmt(r.p20)}</div><div class="plbl">20' Dry</div></div><div class="pbox"><div class="pval"><span class="pusd">$</span>${fmt(r.p40)}</div><div class="plbl">40' Dry</div></div></div>`}
+        <div class="rcard-meta"><span class="chip">&#128336; ${r.tt}</span><span class="chip">${isCr?'&#9992; Aéreo':'&#128674; Marítimo'}</span></div>
+      </div>
+    </div>`).join('');
+}
+
+sv('impo',document.querySelector('.srv.on'));
+</script>
+</body>
+</html>
